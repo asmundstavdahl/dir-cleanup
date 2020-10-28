@@ -1,22 +1,34 @@
 
 def dir_cleanup(dirname, indent = "")
-    print "#{indent}→ ", dirname, "\n"
+    print "#{indent}in #{dirname}\n"
 
-    Dir.open dirname, do |dir|
-        dir.each do |entry|
-            unless entry =~ /^\.+$/
-                print "#{indent}  ✓ ", entry, "\n"
+    begin
+        Dir.open dirname, do |dir|
+            dir.each do |entry|
+                unless entry =~ /^\.+$/
+                    print "#{indent}  is #{entry}\n"
 
-                if Dir.exists? "#{dirname}/#{entry}"
-                    dir_cleanup "#{dirname}/#{entry}", "  "
+                    child_path = "#{dirname}/#{entry}"
+
+                    if Dir.exists? child_path
+                        if File.symlink? child_path
+                            print "#{indent}    * is a symlink\n"
+                            print "#{indent}  rm #{child_path}\n"
+                            File.delete child_path
+                        else
+                            dir_cleanup child_path, "#{indent}  "
+                        end
+                    end
                 end
             end
-        end
 
-        # Check if only entries are . and ..
-        if Dir.entries(dirname).size == 2
-            print "#{indent}⨯ ", dirname, "\n"
-            Dir.delete dirname
+            # Check if only entries are . and ..
+            if Dir.entries(dirname).size == 2
+                print "#{indent}rm #{dirname}\n"
+                Dir.delete dirname
+            end
         end
+    rescue exception
+        print "#{indent} WARNING #{exception}"
     end
 end
