@@ -1,0 +1,17 @@
+name: dir-cleanup
+version: 0.1.0
+
+authors:
+  - Åsmund Stavdahl <asmund.stavdahl@gmail.com>
+
+description: |
+  Recursively remove empty directories
+
+license: MIT
+
+executables:
+  - dir-cleanup
+
+targets:
+  dir-cleanup:
+    main: src/main.cr
